@@ -1,0 +1,9 @@
+# created by virtualenv automatically
+images
+containers
+bin
+lib
+CACHEDIR.TAG
+pyvenv.cfg
+*egg-info
+build
