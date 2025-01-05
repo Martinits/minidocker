@@ -7,3 +7,4 @@ CACHEDIR.TAG
 pyvenv.cfg
 *egg-info
 build
+.ccls-cache
