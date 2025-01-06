@@ -86,8 +86,7 @@ def make_pseudofs(new_root):
                 linux.MS_NOSUID | linux.MS_STRICTATIME, 'mode=755')
 
 def contain(cmd, container_id, image_name, image_dir, container_dir):
-    # create new mount ns
-    linux.unshare(linux.CLONE_NEWNS)
+    linux.sethostname(container_id)
 
     # make new root private recursively
     linux.mount(None, "/", None, linux.MS_PRIVATE | linux.MS_REC, '')
@@ -122,18 +121,14 @@ def contain(cmd, container_id, image_name, image_dir, container_dir):
               default=os.path.abspath('../containers'))
 def run(command, image_name, image_dir, container_dir):
     container_id = str(uuid.uuid4())
-    pid = os.fork()
-    if pid == 0:
-        # we are in child process
-        try:
-            contain(command, container_id, image_name, image_dir, container_dir)
-        except Exception as e:
-            print(f"Child Process Error: {e}")
-            sys.exit(1)
-    else:
-        # we are in father process
-        _, status = os.waitpid(pid, 0)
-        print(f"{pid} has exited with status {status}")
+
+    flags = linux.CLONE_NEWPID | linux.CLONE_NEWNS | linux.CLONE_NEWUTS
+    cb_args = (command, container_id, image_name, image_dir, container_dir)
+    pid = linux.clone(contain, flags, cb_args)
+
+    # here are father process
+    _, status = os.waitpid(pid, 0)
+    print(f"{pid} has exited with status {status}")
 
 if __name__ == '__main__':
     cli()

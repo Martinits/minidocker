@@ -88,6 +88,9 @@ def make_pseudofs(new_root):
 def contain(cmd, container_id, image_name, image_dir, container_dir):
     # create new mount ns
     linux.unshare(linux.CLONE_NEWNS)
+    # create new UTS ns
+    linux.unshare(linux.CLONE_NEWUTS)
+    linux.sethostname(container_id)
 
     # make new root private recursively
     linux.mount(None, "/", None, linux.MS_PRIVATE | linux.MS_REC, '')

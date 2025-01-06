@@ -69,15 +69,15 @@ def make_pseudofs(new_root):
                 linux.MS_NOSUID | linux.MS_STRICTATIME, 'mode=755')
 
 def contain(cmd, container_id, image_name, image_dir, container_dir):
-    new_root = create_container_dir(image_name, image_dir,
-                                            container_id, container_dir)
-    print(f"Created a new root fs for our container: {new_root}")
-
     # create new mount ns
     linux.unshare(linux.CLONE_NEWNS)
 
     # make new root private recursively
     linux.mount(None, "/", None, linux.MS_PRIVATE | linux.MS_REC, '')
+
+    new_root = create_container_dir(image_name, image_dir,
+                                            container_id, container_dir)
+    print(f"Created a new root fs for our container: {new_root}")
 
     make_pseudofs(new_root)
     makedev(new_root)
