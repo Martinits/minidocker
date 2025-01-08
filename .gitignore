@@ -1,5 +1,5 @@
-# created by virtualenv automatically
-images
+src/images/*
+!src/images/Dockerfile
 containers
 bin
 lib
