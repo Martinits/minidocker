@@ -1,4 +1,6 @@
 src/images/*
+__pycache__
+src/level7/*.json
 !src/images/Dockerfile
 containers
 bin
